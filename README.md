@@ -1,9 +1,8 @@
 # Passwords Manager Desktop application
-Manage all the credentials in one place in a safe mode.
-
+Manage all the credentials in one place in a safe mode.<br>
 Be careful, because as this application doesn't have external connections, it doesn't have a recovery system.
 
-How to Package the application in a Executable file
+### How to Package the application in a Executable file
 1. Download Liberica "JRE full" from official page if you don't have it: `https://bell-sw.com/pages/downloads/#jdk-21-lts`
 2. Compile the project:
 `$ mvn clean package`
