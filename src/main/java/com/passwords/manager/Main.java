@@ -3,27 +3,19 @@ package com.passwords.manager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jakarta.enterprise.inject.se.SeContainer;
-import jakarta.enterprise.inject.se.SeContainerInitializer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class App extends Application {
+public class Main extends Application {
 
-	private static final Logger logger = LogManager.getLogger(App.class);
-
-	// CDI container needed for Jakarta EE (CDI) framework
-	private static SeContainer container;
+	private static final Logger logger = LogManager.getLogger(Main.class);
 
 	@Override
 	public void init() throws Exception {
 		logger.info("Initializing application");
-
-		container = SeContainerInitializer.newInstance().initialize();
-		logger.info("Container initialized");
 	}
 
 	@Override
