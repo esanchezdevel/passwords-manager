@@ -4,9 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -22,13 +25,21 @@ public class Main extends Application {
 	public void start(Stage stage) throws Exception {
 	    logger.info("Starting JavaFX application...");
 
-        // Use CDI-injected service
-        Label label = new Label("Hello World!!!");
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/main-view.fxml"));
+		
+		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
-        // Setup UI
-        StackPane root = new StackPane(label);
-        Scene scene = new Scene(root, 400, 300);
+        Scene scene = new Scene(loader.load());
+
+		stage.setX(screenBounds.getMinX());
+		stage.setY(screenBounds.getMinY());
+		stage.setMaxWidth(screenBounds.getWidth());
+		stage.setMinWidth(screenBounds.getWidth());
+		stage.setMaxHeight(screenBounds.getHeight());
+		stage.setMinHeight(screenBounds.getHeight());
+
         stage.setTitle("JavaFX + CDI");
+		stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import com.todo.todoapp.application.components.*?>
+
+<!-- welcome -->
+<AnchorPane fx:id="welcomePane" 
+            stylesheets="@styles.css"
+            style="-fx-background-color: white;" 
+            xmlns="http://javafx.com/javafx" 
+            xmlns:fx="http://javafx.com/fxml" 
+            fx:controller="com.passwords.manager.controller.WelcomeViewController">
+
+
+    <Label fx:id="titleLabel" text="" style="-fx-font-size: 20;" AnchorPane.topAnchor="45.0" AnchorPane.leftAnchor="80.0" />
+
+</AnchorPane>
