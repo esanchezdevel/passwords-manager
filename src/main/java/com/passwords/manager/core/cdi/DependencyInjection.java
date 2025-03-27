@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -76,20 +77,21 @@ public class DependencyInjection {
 	 * @return A class that implements the interface
 	 */
 	private static Class<?> findImplementationClass(Class<?> injectedInterface) {
-		// Find all the application package
+		// Find all the application packages
 		System.out.println("SubPackages:");
 		Set<String> packages = new HashSet<>();
 		packages = findAllPackagesRecursive(BASE_PACKAGE, packages);
 		
-		// For each package find all the classes that are inside and check if it implements the interface
-		packages.forEach(subpackage -> System.out.println("--> " + subpackage));
+		// For each package find all the classes that are inside
+		Set<Class<?>> classes = new HashSet<>();
+		packages.forEach(subpackage -> {
+			System.out.println("--> " + subpackage);
+			classes.addAll(findAllClasses(subpackage));
+		});
 
-		// Set<Class<?>> classes = reader.lines()
-		// 								.filter(line -> line.endsWith(".class"))
-		// 								.map(classFile -> getClass(classFile))
-		// 								.collect(Collectors.toSet());
-		// System.out.println("Classes: ");
-		// classes.forEach(c -> System.out.println("--> " + c));
+		// TODO For each class check if it implements the interface using reflection
+		System.out.println("All Classes: ");
+		classes.forEach(c -> System.out.println("--> " + c));
 
 		return interfaceToImplementation.getOrDefault(injectedInterface, injectedInterface); // Temporal solution to be changed
 	}
@@ -117,14 +119,33 @@ public class DependencyInjection {
 		return packages;
 	}
 
+	/**
+	 * This method finds all the classes that are inside one given package
+	 * 
+	 * @param basePackage The package to be scan
+	 * @return A set of classes found
+	 */
+	private static Set<Class<?>> findAllClasses(String basePackage) {
+		BufferedReader reader = readPackage(basePackage);
+
+		Set<Class<?>> classes = reader.lines()
+		 								.filter(line -> line.endsWith(".class"))
+		 								.map(classFile -> getClass(basePackage, classFile))
+		 								.collect(Collectors.toSet());
+		System.out.println("Classes: ");
+		classes.forEach(c -> System.out.println("--> " + c));
+
+		return classes;
+	}
+
 	private static BufferedReader readPackage(String packageName) {
 		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replace(".", "/"));
 		return new BufferedReader(new InputStreamReader(inputStream));
 	}
 
-	private static Class<?> getClass(String classFile) {
+	private static Class<?> getClass(String basePackage, String classFile) {
 		try {
-			return Class.forName(BASE_PACKAGE + "." + classFile.substring(0, classFile.lastIndexOf(".")));
+			return Class.forName(basePackage + "." + classFile.substring(0, classFile.lastIndexOf(".")));
 		} catch (ClassNotFoundException e) {
 			System.out.println("Error. Class " + classFile + " Not Found.");
 			e.printStackTrace();
