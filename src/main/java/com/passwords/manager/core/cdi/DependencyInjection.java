@@ -4,49 +4,18 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.nio.Buffer;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.passwords.manager.core.cdi.annotation.Inject;
-import com.passwords.manager.domain.service.TestServiceImpl;
-import com.sun.tools.javac.Main;
 
 public class DependencyInjection {
 
 	private static final String BASE_PACKAGE = "com.passwords.manager";
-
-	private static final List<Class<?>> classes = List.of(Main.class, TestServiceImpl.class);
-
-	private static final Map<Class<?>, Class<?>> interfaceToImplementation = new HashMap<>();
-
-    static {
-        // Register interfaces and their implementations
-        //interfaceToImplementation.put(TestService.class, TestServiceImpl.class);
-		scanClasses();
-    }
-
-	private static void scanClasses() {
-		
-		// TODO scan all classes from the BASE_PACKAGE
-		classes.forEach(clazz -> {
-
-			// for each class get the interfaces
-			Class<?>[] interfaces = clazz.getInterfaces(); // TODO remove when we have the real classes in a for loop
-
-			if (interfaces.length > 0) {
-				System.out.println("Interface found for class " + clazz + ": " + interfaces[0]);
-				interfaceToImplementation.put(interfaces[0], clazz);
-			}
-		});
-	}
 
 	public static void injectDependencies(Object object) {
 		// use reflection to instanciate the classes annotated with @Inject
@@ -89,11 +58,20 @@ public class DependencyInjection {
 			classes.addAll(findAllClasses(subpackage));
 		});
 
-		// TODO For each class check if it implements the interface using reflection
+		// For each class check if it implements the interface using reflection
 		System.out.println("All Classes: ");
-		classes.forEach(c -> System.out.println("--> " + c));
-
-		return interfaceToImplementation.getOrDefault(injectedInterface, injectedInterface); // Temporal solution to be changed
+		for (Class<?> clazz : classes) {
+			System.out.println("--> " + clazz);
+			Optional<Class<?>> result = Arrays.stream(clazz.getInterfaces())
+													.filter(i -> i == injectedInterface)
+													.findFirst();
+			if (result.isPresent()) {
+				System.out.println("Found implementation class: " + clazz);
+				return clazz;
+			}	
+		}
+		System.out.println("Implementation class not found. Use the same class");
+		return injectedInterface;
 	}
 
 	/**
