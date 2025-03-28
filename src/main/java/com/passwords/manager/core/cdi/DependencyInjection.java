@@ -4,29 +4,64 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.passwords.manager.core.cdi.annotation.Component;
 import com.passwords.manager.core.cdi.annotation.Inject;
 
 public class DependencyInjection {
 
 	private static final String BASE_PACKAGE = "com.passwords.manager";
 
+	private static final Map<Class<?>, Class<?>> IMPLEMENTATIONS = new HashMap<>();
+
+	/**
+	 * Load all the classes that can be injected.
+	 * This method must be executed only one time at the start of the application execution.
+	 * 
+	 */
+	public static void load() {
+		System.out.println("Start loading dependencies on the system");
+		// Find all the application packages
+		Set<String> packages = new HashSet<>();
+		packages = findAllPackagesRecursive(BASE_PACKAGE, packages);
+
+		// For each package find all the classes that are inside
+		Set<Class<?>> classes = new HashSet<>();
+		packages.forEach(subpackage -> {
+			System.out.println("Package: " + subpackage);
+			classes.addAll(findAllClasses(subpackage));
+		});
+
+		// For each class check if they are annotated as @Component and in that case
+		// look for the interfaces that are using.
+		classes.forEach(clazz -> {
+			if (clazz.isAnnotationPresent(Component.class)) {
+				System.out.println("Found class annotated with @Component: " + clazz);
+				Class<?>[] interfaces = clazz.getInterfaces();
+
+				if (interfaces.length > 0)
+					IMPLEMENTATIONS.put(interfaces[0], clazz);
+			}
+		});
+		System.out.println("All dependencies loaded");
+	}
+
 	public static void injectDependencies(Object object) {
 		// use reflection to instanciate the classes annotated with @Inject
 		Class<?> clazz = object.getClass();
-		System.out.println("Injecting dependency for class: " + clazz);
+		System.out.println("Injecting dependencies for class: " + clazz);
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Inject.class)) {
 				Class<?> injectedInterface = field.getType();
 				System.out.println("Service to be injected: " + injectedInterface);
 				try {
-					Class<?> implementationClass = findImplementationClass(injectedInterface);
+					Class<?> implementationClass = IMPLEMENTATIONS.get(injectedInterface);
 
 					Object instance = implementationClass.getDeclaredConstructor().newInstance();
 					field.setAccessible(true);
@@ -36,42 +71,7 @@ public class DependencyInjection {
 				}
 			}
 		}
-	}
-
-
-	/**
-	 * This method receive one java interface, and returns one class that implements that interface
-	 * 
-	 * @param injectedInterface The interface to check
-	 * @return A class that implements the interface
-	 */
-	private static Class<?> findImplementationClass(Class<?> injectedInterface) {
-		// Find all the application packages
-		System.out.println("SubPackages:");
-		Set<String> packages = new HashSet<>();
-		packages = findAllPackagesRecursive(BASE_PACKAGE, packages);
-		
-		// For each package find all the classes that are inside
-		Set<Class<?>> classes = new HashSet<>();
-		packages.forEach(subpackage -> {
-			System.out.println("--> " + subpackage);
-			classes.addAll(findAllClasses(subpackage));
-		});
-
-		// For each class check if it implements the interface using reflection
-		System.out.println("All Classes: ");
-		for (Class<?> clazz : classes) {
-			System.out.println("--> " + clazz);
-			Optional<Class<?>> result = Arrays.stream(clazz.getInterfaces())
-													.filter(i -> i == injectedInterface)
-													.findFirst();
-			if (result.isPresent()) {
-				System.out.println("Found implementation class: " + clazz);
-				return clazz;
-			}	
-		}
-		System.out.println("Implementation class not found. Use the same class");
-		return injectedInterface;
+		System.out.println("All dependencies injected");
 	}
 
 	/**

@@ -53,6 +53,7 @@ public class Main extends Application {
 
 	public static void main(String[] args) {
 		logger.info("Running Passwords Manager");
+		DependencyInjection.load();
 		DependencyInjection.injectDependencies(new Main());
 		launch(args);
 	}
