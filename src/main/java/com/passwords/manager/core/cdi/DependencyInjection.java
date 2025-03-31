@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.passwords.manager.core.cdi.annotation.Component;
 import com.passwords.manager.core.cdi.annotation.Inject;
 
@@ -25,6 +28,8 @@ import com.passwords.manager.core.cdi.annotation.Inject;
  */
 public class DependencyInjection {
 
+	private static final Logger logger = LogManager.getLogger(DependencyInjection.class);
+
 	// The base package to be used must be a package that contains at least one class inside
 	// It should be the package where we invoke the "main" method.
 	private static final String BASE_PACKAGE = "com.passwords.manager";
@@ -37,7 +42,7 @@ public class DependencyInjection {
 	 * 
 	 */
 	public static void load() {
-		System.out.println("Start loading dependencies on the system");
+		logger.debug("Start loading dependencies on the system");
 		// Find all the application packages
 		Set<String> packages = new HashSet<>();
 		packages = findAllPackagesRecursive(BASE_PACKAGE, packages);
@@ -45,7 +50,7 @@ public class DependencyInjection {
 		// For each package find all the classes that are inside
 		Set<Class<?>> classes = new HashSet<>();
 		packages.forEach(subpackage -> {
-			System.out.println("Package: " + subpackage);
+			logger.debug("Package: " + subpackage);
 			classes.addAll(findAllClasses(subpackage));
 		});
 
@@ -53,14 +58,14 @@ public class DependencyInjection {
 		// look for the interfaces that are using.
 		classes.forEach(clazz -> {
 			if (clazz.isAnnotationPresent(Component.class)) {
-				System.out.println("Found class annotated with @Component: " + clazz);
+				logger.debug("Found class annotated with @Component: " + clazz);
 				Class<?>[] interfaces = clazz.getInterfaces();
 
 				if (interfaces.length > 0)
 					IMPLEMENTATIONS.put(interfaces[0], clazz);
 			}
 		});
-		System.out.println("All dependencies loaded");
+		logger.debug("All dependencies loaded");
 	}
 
 	/**
@@ -75,11 +80,11 @@ public class DependencyInjection {
 	public static void injectDependencies(Object object) throws RuntimeException {
 		// use reflection to instanciate the classes annotated with @Inject
 		Class<?> clazz = object.getClass();
-		System.out.println("Injecting dependencies for class: " + clazz);
+		logger.debug("Injecting dependencies for class: " + clazz);
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.isAnnotationPresent(Inject.class)) {
 				Class<?> injectedInterface = field.getType();
-				System.out.println("Service to be injected: " + injectedInterface);
+				logger.debug("Service to be injected: " + injectedInterface);
 
 				try {
 					// If the @Inject annotation has a value, use that class as the implementation class
@@ -99,7 +104,7 @@ public class DependencyInjection {
 				}
 			}
 		}
-		System.out.println("All dependencies injected");
+		logger.debug("All dependencies injected");
 	}
 
 	/**
@@ -138,8 +143,8 @@ public class DependencyInjection {
 		 								.filter(line -> line.endsWith(".class"))
 		 								.map(classFile -> getClass(packagePath, classFile))
 		 								.collect(Collectors.toSet());
-		System.out.println("Classes: ");
-		classes.forEach(c -> System.out.println("--> " + c));
+		logger.debug("Classes: ");
+		classes.forEach(c -> logger.debug("--> " + c));
 
 		return classes;
 	}
@@ -167,7 +172,7 @@ public class DependencyInjection {
 		try {
 			return Class.forName(packagePath + "." + classFile.substring(0, classFile.lastIndexOf(".")));
 		} catch (ClassNotFoundException e) {
-			System.out.println("Error. Class " + classFile + " Not Found.");
+			logger.debug("Error. Class " + classFile + " Not Found.");
 			e.printStackTrace();
 			return null;
 		}
