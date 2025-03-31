@@ -69,8 +69,14 @@ public class DependencyInjection {
 			if (field.isAnnotationPresent(Inject.class)) {
 				Class<?> injectedInterface = field.getType();
 				System.out.println("Service to be injected: " + injectedInterface);
+
 				try {
-					Class<?> implementationClass = IMPLEMENTATIONS.get(injectedInterface);
+					// If the @Inject annotation has a value, use that class as the implementation class
+					// Else get the implementation class loaded at application startup
+					Class<?> implementationClass = field.getAnnotation(Inject.class).value();
+					if (implementationClass == Void.class) {
+						implementationClass = IMPLEMENTATIONS.get(injectedInterface);
+					}
 
 					Object instance = implementationClass.getDeclaredConstructor().newInstance();
 					field.setAccessible(true);

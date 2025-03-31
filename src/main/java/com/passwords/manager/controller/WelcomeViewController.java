@@ -4,13 +4,14 @@ import com.passwords.manager.core.cdi.App;
 import com.passwords.manager.core.cdi.DependencyInjection;
 import com.passwords.manager.core.cdi.annotation.Inject;
 import com.passwords.manager.domain.service.TestService;
+import com.passwords.manager.domain.service.TestServiceBis;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class WelcomeViewController extends App {
 
-	@Inject
+	@Inject(TestServiceBis.class)
 	private TestService testService;
 
 	@FXML
