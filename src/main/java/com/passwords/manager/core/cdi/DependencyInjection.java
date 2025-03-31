@@ -14,8 +14,19 @@ import java.util.stream.Collectors;
 import com.passwords.manager.core.cdi.annotation.Component;
 import com.passwords.manager.core.cdi.annotation.Inject;
 
+/**
+ * Class used for a custom dependency injection in the application.
+ * To use this dependency injection the interfaces to be injected must be annotated with
+ * the annotation @Inject, that can also be used as @Inject(MyClass.class) if we want to indicate
+ * one specific class to be instantiated.
+ * 
+ * Also, the classes that can be instantiated must be annotated with the annotation @Component, to 
+ * indicate to the process that this classes must be scanned during the application startup
+ */
 public class DependencyInjection {
 
+	// The base package to be used must be a package that contains at least one class inside
+	// It should be the package where we invoke the "main" method.
 	private static final String BASE_PACKAGE = "com.passwords.manager";
 
 	private static final Map<Class<?>, Class<?>> IMPLEMENTATIONS = new HashMap<>();
