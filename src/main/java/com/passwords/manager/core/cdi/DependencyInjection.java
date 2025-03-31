@@ -66,6 +66,8 @@ public class DependencyInjection {
 					Object instance = implementationClass.getDeclaredConstructor().newInstance();
 					field.setAccessible(true);
 					field.set(object, instance);
+
+					injectDependencies(instance); // recursive call to inject also services inside the injected classes
 				} catch (Exception e) {
 					throw new RuntimeException("Failed to inject dependency " + field.getName(), e);
 				}
