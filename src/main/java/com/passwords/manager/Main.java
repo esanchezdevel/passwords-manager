@@ -3,12 +3,12 @@ package com.passwords.manager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.passwords.manager.core.cdi.DependencyInjection;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -47,12 +47,13 @@ public class Main extends Application {
 
 	@Override
 	public void stop() throws Exception {
-		// TODO Auto-generated method stub
 		super.stop();
 	}
 
 	public static void main(String[] args) {
 		logger.info("Running Passwords Manager");
+		DependencyInjection.load();
+		DependencyInjection.injectDependencies(new Main());
 		launch(args);
 	}
 }

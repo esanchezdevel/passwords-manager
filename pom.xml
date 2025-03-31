@@ -46,24 +46,24 @@
 
   <build>
     <plugins>
-			<plugin>
-				<groupId>org.openjfx</groupId>
-				<artifactId>javafx-maven-plugin</artifactId>
-				<version>0.0.8</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<mainClass>com.passwords.manager.Main</mainClass>
-				</configuration>
-			</plugin>
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>com.passwords.manager.Launcher</mainClass>
+        </configuration>
+      </plugin>
 
-			<!-- JPackage for creating native executables -->
-			<plugin>
+      <!-- JPackage for creating native executables -->
+      <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.3.0</version>
@@ -80,7 +80,7 @@
 							</descriptorRefs>
               <archive>
                 <manifest>
-                  <mainClass>com.passwords.manager.Main</mainClass>
+                  <mainClass>com.passwords.manager.Launcher</mainClass>
                 </manifest>
               </archive>
 						</configuration>

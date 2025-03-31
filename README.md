@@ -7,4 +7,4 @@ Be careful, because as this application doesn't have external connections, it do
 2. Compile the project:
 `$ mvn clean package`
 3. Execute the JPACKAGE command to create the executable file:<br>
-`jpackage --name PasswordsManagerExecutable --input target --main-jar passwords-manager-1.0-SNAPSHOT-jar-with-dependencies.jar --main-class com.passwords.manager.Main --type app-image --runtime-image <Path-To-Liberica-JRE>`
+`jpackage --name PasswordsManagerExecutable --input target --main-jar passwords-manager-1.0-SNAPSHOT-jar-with-dependencies.jar --main-class com.passwords.manager.Launcher --type app-image --runtime-image <Path-To-Liberica-JRE>`
