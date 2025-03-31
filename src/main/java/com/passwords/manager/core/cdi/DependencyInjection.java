@@ -89,18 +89,18 @@ public class DependencyInjection {
 	 * This method find all the application packages in a recursive way.
 	 * For each package the method calls to itself to get the subpackages that are inside it.
 	 * 
-	 * @param basePackage The package path to search
+	 * @param packagePath The package path to search
 	 * @param packages The Set collection where all the previous packages found were added
 	 * @return The Set collection where all the packages found are added
 	 */
-	private static Set<String> findAllPackagesRecursive(String basePackage, Set<String> packages) {
-		BufferedReader reader = readPackage(basePackage);
+	private static Set<String> findAllPackagesRecursive(String packagePath, Set<String> packages) {
+		BufferedReader reader = readPackage(packagePath);
 		
 		Iterator<String> iterator = reader.lines().iterator();
 		while(iterator.hasNext()) {
 			String line = iterator.next();
 			if (!line.endsWith(".class")) {
-				String subpackage = basePackage + "." + line;
+				String subpackage = packagePath + "." + line;
 				packages.add(subpackage);
 				packages = findAllPackagesRecursive(subpackage, packages);
 			}
@@ -111,15 +111,15 @@ public class DependencyInjection {
 	/**
 	 * This method finds all the classes that are inside one given package
 	 * 
-	 * @param basePackage The package to be scan
+	 * @param packagePath The package to be scan
 	 * @return A set of classes found
 	 */
-	private static Set<Class<?>> findAllClasses(String basePackage) {
-		BufferedReader reader = readPackage(basePackage);
+	private static Set<Class<?>> findAllClasses(String packagePath) {
+		BufferedReader reader = readPackage(packagePath);
 
 		Set<Class<?>> classes = reader.lines()
 		 								.filter(line -> line.endsWith(".class"))
-		 								.map(classFile -> getClass(basePackage, classFile))
+		 								.map(classFile -> getClass(packagePath, classFile))
 		 								.collect(Collectors.toSet());
 		System.out.println("Classes: ");
 		classes.forEach(c -> System.out.println("--> " + c));
@@ -131,24 +131,24 @@ public class DependencyInjection {
 	 * Read all the content inside one java package
 	 * The method will replace the dots in the package with the slash to treat the path as a directory path
 	 * 
-	 * @param packageName The package path
+	 * @param packagePath The package path
 	 * @return The BufferedReader that can be used to read the content of the directory path.
 	 */
-	private static BufferedReader readPackage(String packageName) {
-		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replace(".", "/"));
+	private static BufferedReader readPackage(String packagePath) {
+		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(packagePath.replace(".", "/"));
 		return new BufferedReader(new InputStreamReader(inputStream));
 	}
 
 	/**
 	 * Get the Class object from the package path and the class name
 	 * 
-	 * @param basePackage The string with the full package path
+	 * @param packagePath The string with the full package path
 	 * @param classFile The Class name string
 	 * @return The Class object
 	 */
-	private static Class<?> getClass(String basePackage, String classFile) {
+	private static Class<?> getClass(String packagePath, String classFile) {
 		try {
-			return Class.forName(basePackage + "." + classFile.substring(0, classFile.lastIndexOf(".")));
+			return Class.forName(packagePath + "." + classFile.substring(0, classFile.lastIndexOf(".")));
 		} catch (ClassNotFoundException e) {
 			System.out.println("Error. Class " + classFile + " Not Found.");
 			e.printStackTrace();
