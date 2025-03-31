@@ -52,7 +52,16 @@ public class DependencyInjection {
 		System.out.println("All dependencies loaded");
 	}
 
-	public static void injectDependencies(Object object) {
+	/**
+	 * Injects all the dependencies inside one class and inside the classes that are injected.
+	 * This method must be call at the start of every class that uses Dependency Injection.
+	 * To avoid call this method explicity in every class, you can extends the class com.passwords.manager.core.cdi.App
+	 * that will call this method automatically.
+	 * 
+	 * @param object The object class where we want to inject the classes
+	 * @throws RuntimeException When some error happens during the dependency injection execution.
+	 */
+	public static void injectDependencies(Object object) throws RuntimeException {
 		// use reflection to instanciate the classes annotated with @Inject
 		Class<?> clazz = object.getClass();
 		System.out.println("Injecting dependencies for class: " + clazz);
@@ -118,11 +127,25 @@ public class DependencyInjection {
 		return classes;
 	}
 
+	/**
+	 * Read all the content inside one java package
+	 * The method will replace the dots in the package with the slash to treat the path as a directory path
+	 * 
+	 * @param packageName The package path
+	 * @return The BufferedReader that can be used to read the content of the directory path.
+	 */
 	private static BufferedReader readPackage(String packageName) {
 		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replace(".", "/"));
 		return new BufferedReader(new InputStreamReader(inputStream));
 	}
 
+	/**
+	 * Get the Class object from the package path and the class name
+	 * 
+	 * @param basePackage The string with the full package path
+	 * @param classFile The Class name string
+	 * @return The Class object
+	 */
 	private static Class<?> getClass(String basePackage, String classFile) {
 		try {
 			return Class.forName(basePackage + "." + classFile.substring(0, classFile.lastIndexOf(".")));
