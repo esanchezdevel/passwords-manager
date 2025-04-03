@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.passwords.manager.core.cdi.annotation.Component;
 import com.passwords.manager.core.cdi.annotation.Inject;
+import com.passwords.manager.core.cdi.annotation.Repository;
 
 /**
  * Class used for a custom dependency injection in the application.
@@ -63,6 +66,22 @@ public class DependencyInjection {
 
 				if (interfaces.length > 0)
 					IMPLEMENTATIONS.put(interfaces[0], clazz);
+			} else if (clazz.isAnnotationPresent(Repository.class)) {
+				logger.debug("Found interface annotated with @Repository: " + clazz);
+				Class<?>[] interfaces = clazz.getInterfaces();
+
+				logger.debug("TEST--Adding repo class: " + clazz + " super class: " + interfaces[0]);
+				Type[] genericInterfaces = clazz.getGenericInterfaces();
+				ParameterizedType parameterizedType = (ParameterizedType) genericInterfaces[0];
+				Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+				for (Type actualType : actualTypeArguments) {
+					if (actualType instanceof Class) {
+						Class<?> entityClass = (Class<?>) actualType;
+						System.out.println("TEST--Generic type: " + entityClass);
+					}
+				}
+				// TODO Use interfaces[0] and entityClass to create a Proxy class, that is what we'll need to instanciate
+				IMPLEMENTATIONS.put(clazz, interfaces[0]);
 			}
 		});
 		logger.debug("All dependencies loaded");
