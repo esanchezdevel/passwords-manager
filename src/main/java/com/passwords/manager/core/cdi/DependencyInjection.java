@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,6 +40,7 @@ public class DependencyInjection {
 	private static final String BASE_PACKAGE = "com.passwords.manager";
 
 	private static final Map<Class<?>, Class<?>> IMPLEMENTATIONS = new HashMap<>();
+	private static final Map<Class<?>, RepositoryData> REPOSITORIES = new HashMap<>();
 
 	/**
 	 * Load all the classes that can be injected.
@@ -74,14 +77,14 @@ public class DependencyInjection {
 				Type[] genericInterfaces = clazz.getGenericInterfaces();
 				ParameterizedType parameterizedType = (ParameterizedType) genericInterfaces[0];
 				Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+				Class<?> entityClass = null;
 				for (Type actualType : actualTypeArguments) {
 					if (actualType instanceof Class) {
-						Class<?> entityClass = (Class<?>) actualType;
-						System.out.println("TEST--Generic type: " + entityClass);
+						entityClass = (Class<?>) actualType;
+						logger.debug("TEST--Generic type: " + entityClass);
 					}
 				}
-				// TODO Use interfaces[0] and entityClass to create a Proxy class, that is what we'll need to instanciate
-				IMPLEMENTATIONS.put(clazz, interfaces[0]);
+				REPOSITORIES.put(clazz, new RepositoryData(interfaces[0], entityClass));
 			}
 		});
 		logger.debug("All dependencies loaded");
@@ -110,7 +113,15 @@ public class DependencyInjection {
 					// Else get the implementation class loaded at application startup
 					Class<?> implementationClass = field.getAnnotation(Inject.class).value();
 					if (implementationClass == Void.class) {
-						implementationClass = IMPLEMENTATIONS.get(injectedInterface);
+						if (IMPLEMENTATIONS.containsKey(injectedInterface)) {
+							implementationClass = IMPLEMENTATIONS.get(injectedInterface);
+						} else if (REPOSITORIES.containsKey(injectedInterface)) {
+							RepositoryData repositoryData = REPOSITORIES.get(injectedInterface);
+							// TODO create Proxy class to implement the repository interface
+						} else {
+							logger.error("Implementation not found");
+							throw new RuntimeErrorException(new Error("Implementation not found for interface " + injectedInterface));
+						}
 					}
 
 					Object instance = implementationClass.getDeclaredConstructor().newInstance();
