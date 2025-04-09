@@ -25,20 +25,7 @@ public class WelcomeViewController extends App {
 
 	@FXML
 	public void initialize() {
-
-		Credential credential = new Credential();
-		credential.setSiteName("Test site");
-		credential.setSiteUrl("http://test.test");
-		credential.setUsername("test-user");
-		credential.setPassword("test-password");
-
-		credentialService.store(credential);
-
-		Optional<Credential> storedCredential = credentialService.getBySiteName("Test site");
-		if (storedCredential.isPresent())
-			logger.info("Stored credential: {}", storedCredential.get());
-		else
-			logger.info("No credential found in database");
+		logger.debug("Start Initialize");
 
 		titleLabel.setText("Title Label For Passwords Manager");
 	}

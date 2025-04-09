@@ -1,5 +1,8 @@
 package com.passwords.manager.domain.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +24,14 @@ public class CredentialServiceImpl implements CredentialService {
 	@Override
 	public Optional<Credential> getBySiteName(String siteName) {
 		logger.info("Getting credential for site: {}", siteName);
-		return credentialRepository.findBy("siteName", siteName);
+		Map<String, String> params = new HashMap<>();
+		params.put("siteName", siteName);
+		List<Credential> credentials = credentialRepository.findBy(params);
+
+		if (credentials.size() > 0)
+			return Optional.of(credentials.get(0));
+		else
+			return Optional.empty();
 	}
 
 	@Override
