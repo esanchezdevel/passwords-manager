@@ -60,6 +60,13 @@
         <artifactId>hibernate-core</artifactId>
         <version>6.6.12.Final</version>
     </dependency>
+
+    <!-- Dependency to load classes from jar files -->
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.10.2</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

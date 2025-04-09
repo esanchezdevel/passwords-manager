@@ -1,8 +1,5 @@
 package com.passwords.manager.core.cdi;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
@@ -12,16 +9,14 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.management.RuntimeErrorException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.reflections.Reflections;
 
 import com.passwords.manager.core.cdi.annotation.Component;
 import com.passwords.manager.core.cdi.annotation.Inject;
@@ -54,46 +49,43 @@ public class DependencyInjection {
 	 */
 	public static void load() {
 		logger.debug("Start loading dependencies on the system");
-		// Find all the application packages
-		Set<String> packages = new HashSet<>();
-		packages = findAllPackagesRecursive(BASE_PACKAGE, packages);
 
-		// For each package find all the classes that are inside
-		Set<Class<?>> classes = new HashSet<>();
-		packages.forEach(subpackage -> {
-			logger.debug("Package: " + subpackage);
-			classes.addAll(findAllClasses(subpackage));
-		});
+		Reflections reflections = new Reflections(BASE_PACKAGE);
 
-		// For each class check if they are annotated as @Component and in that case
-		// look for the interfaces that are using.
-		classes.forEach(clazz -> {
-			if (clazz.isAnnotationPresent(Component.class)) {
-				logger.debug("Found class annotated with @Component: " + clazz);
-				Class<?>[] interfaces = clazz.getInterfaces();
-
-				if (interfaces.length > 0)
-					IMPLEMENTATIONS.put(interfaces[0], clazz);
-			} else if (clazz.isAnnotationPresent(Repository.class)) {
-				logger.debug("Found interface annotated with @Repository: " + clazz);
-				Class<?>[] interfaces = clazz.getInterfaces();
-
-				logger.debug("Adding repo class: " + clazz + " super class: " + interfaces[0]);
-				Type[] genericInterfaces = clazz.getGenericInterfaces();
-				ParameterizedType parameterizedType = (ParameterizedType) genericInterfaces[0];
-				Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-				Class<?> entityClass = null;
-				for (Type actualType : actualTypeArguments) {
-					if (actualType instanceof Class) {
-						entityClass = (Class<?>) actualType;
-						logger.debug("Generic type: " + entityClass);
-					}
-				}
-				REPOSITORIES.put(clazz, new RepositoryData(interfaces[0], entityClass));
+		// Find all classes annotated with @Component
+		Set<Class<?>> components = reflections.getTypesAnnotatedWith(Component.class);
+		for (Class<?> clazz : components) {
+			logger.debug("Found class annotated with @Component: " + clazz);
+			Class<?>[] interfaces = clazz.getInterfaces();
+			if (interfaces.length > 0) {
+				IMPLEMENTATIONS.put(interfaces[0], clazz);
 			}
-		});
+		}
+
+		// Find all interfaces annotated with @Repository
+		Set<Class<?>> repositories = reflections.getTypesAnnotatedWith(Repository.class);
+		for (Class<?> clazz : repositories) {
+			logger.debug("Found interface annotated with @Repository: " + clazz);
+			Class<?>[] interfaces = clazz.getInterfaces();
+
+			logger.debug("Adding repo class: " + clazz + " super class: " + interfaces[0]);
+			Type[] genericInterfaces = clazz.getGenericInterfaces();
+			ParameterizedType parameterizedType = (ParameterizedType) genericInterfaces[0];
+			Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
+			Class<?> entityClass = null;
+			for (Type actualType : actualTypeArguments) {
+				if (actualType instanceof Class<?>) {
+					entityClass = (Class<?>) actualType;
+					logger.debug("Generic type: " + entityClass);
+				}
+			}
+			REPOSITORIES.put(clazz, new RepositoryData(interfaces[0], entityClass));
+		}
+
 		logger.debug("All dependencies loaded");
 	}
+
 
 	/**
 	 * Injects all the dependencies inside one class and inside the classes that are injected.
@@ -232,78 +224,5 @@ public class DependencyInjection {
 				.bindTo(proxy)
 				.invokeWithArguments(args != null ? args : new Object[0]);
 		}
-	}
-
-
-	/**
-	 * This method find all the application packages in a recursive way.
-	 * For each package the method calls to itself to get the subpackages that are inside it.
-	 * 
-	 * @param packagePath The package path to search
-	 * @param packages The Set collection where all the previous packages found were added
-	 * @return The Set collection where all the packages found are added
-	 */
-	private static Set<String> findAllPackagesRecursive(String packagePath, Set<String> packages) {
-		BufferedReader reader = readPackage(packagePath);
-		
-		Iterator<String> iterator = reader.lines().iterator();
-		while(iterator.hasNext()) {
-			String line = iterator.next();
-			if (!line.endsWith(".class")) {
-				String subpackage = packagePath + "." + line;
-				packages.add(subpackage);
-				packages = findAllPackagesRecursive(subpackage, packages);
-			}
-		}
-		return packages;
-	}
-
-	/**
-	 * This method finds all the classes that are inside one given package
-	 * 
-	 * @param packagePath The package to be scan
-	 * @return A set of classes found
-	 */
-	private static Set<Class<?>> findAllClasses(String packagePath) {
-		BufferedReader reader = readPackage(packagePath);
-
-		Set<Class<?>> classes = reader.lines()
-		 								.filter(line -> line.endsWith(".class"))
-		 								.map(classFile -> getClass(packagePath, classFile))
-		 								.collect(Collectors.toSet());
-		logger.debug("Classes: ");
-		classes.forEach(c -> logger.debug("--> " + c));
-
-		return classes;
-	}
-
-	/**
-	 * Read all the content inside one java package
-	 * The method will replace the dots in the package with the slash to treat the path as a directory path
-	 * 
-	 * @param packagePath The package path
-	 * @return The BufferedReader that can be used to read the content of the directory path.
-	 */
-	private static BufferedReader readPackage(String packagePath) {
-		InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(packagePath.replace(".", "/"));
-		return new BufferedReader(new InputStreamReader(inputStream));
-	}
-
-	/**
-	 * Get the Class object from the package path and the class name
-	 * 
-	 * @param packagePath The string with the full package path
-	 * @param classFile The Class name string
-	 * @return The Class object
-	 */
-	private static Class<?> getClass(String packagePath, String classFile) {
-		try {
-			return Class.forName(packagePath + "." + classFile.substring(0, classFile.lastIndexOf(".")));
-		} catch (ClassNotFoundException e) {
-			logger.debug("Error. Class " + classFile + " Not Found.");
-			e.printStackTrace();
-			return null;
-		}
-		
 	}
 }
