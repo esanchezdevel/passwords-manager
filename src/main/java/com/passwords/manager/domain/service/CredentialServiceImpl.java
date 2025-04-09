@@ -9,15 +9,14 @@ import com.passwords.manager.core.cdi.annotation.Component;
 import com.passwords.manager.core.cdi.annotation.Inject;
 import com.passwords.manager.domain.model.Credential;
 import com.passwords.manager.infrastructure.db.repository.CredentialRepository;
-import com.passwords.manager.infrastructure.db.repository.H2Repository;
 
 @Component
 public class CredentialServiceImpl implements CredentialService {
 
 	private static final Logger logger = LogManager.getLogger(CredentialServiceImpl.class);
 
-	@Inject(CredentialRepository.class)
-	private H2Repository<Credential> credentialRepository;
+	@Inject
+	private CredentialRepository credentialRepository;
 
 	@Override
 	public Optional<Credential> getBySiteName(String siteName) {

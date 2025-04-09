@@ -3,8 +3,14 @@ package com.passwords.manager.core.cdi;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,7 +79,7 @@ public class DependencyInjection {
 				logger.debug("Found interface annotated with @Repository: " + clazz);
 				Class<?>[] interfaces = clazz.getInterfaces();
 
-				logger.debug("TEST--Adding repo class: " + clazz + " super class: " + interfaces[0]);
+				logger.debug("Adding repo class: " + clazz + " super class: " + interfaces[0]);
 				Type[] genericInterfaces = clazz.getGenericInterfaces();
 				ParameterizedType parameterizedType = (ParameterizedType) genericInterfaces[0];
 				Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
@@ -81,7 +87,7 @@ public class DependencyInjection {
 				for (Type actualType : actualTypeArguments) {
 					if (actualType instanceof Class) {
 						entityClass = (Class<?>) actualType;
-						logger.debug("TEST--Generic type: " + entityClass);
+						logger.debug("Generic type: " + entityClass);
 					}
 				}
 				REPOSITORIES.put(clazz, new RepositoryData(interfaces[0], entityClass));
@@ -112,19 +118,24 @@ public class DependencyInjection {
 					// If the @Inject annotation has a value, use that class as the implementation class
 					// Else get the implementation class loaded at application startup
 					Class<?> implementationClass = field.getAnnotation(Inject.class).value();
+					Object instance = null;
 					if (implementationClass == Void.class) {
 						if (IMPLEMENTATIONS.containsKey(injectedInterface)) {
 							implementationClass = IMPLEMENTATIONS.get(injectedInterface);
+
+							instance = implementationClass.getDeclaredConstructor().newInstance();
 						} else if (REPOSITORIES.containsKey(injectedInterface)) {
 							RepositoryData repositoryData = REPOSITORIES.get(injectedInterface);
-							// TODO create Proxy class to implement the repository interface
+							
+							logger.debug("repository data for {}: {}", injectedInterface, repositoryData);
+							instance = createProxy(injectedInterface, repositoryData.entity());
 						} else {
 							logger.error("Implementation not found");
 							throw new RuntimeErrorException(new Error("Implementation not found for interface " + injectedInterface));
 						}
+					} else {
+						instance = implementationClass.getDeclaredConstructor().newInstance();
 					}
-
-					Object instance = implementationClass.getDeclaredConstructor().newInstance();
 					field.setAccessible(true);
 					field.set(object, instance);
 
@@ -136,6 +147,90 @@ public class DependencyInjection {
 		}
 		logger.debug("All dependencies injected");
 	}
+
+
+	/**
+	 * Create a Proxy class that implements the interface received as a paramter, and use the entityClass as the Generic class
+	 * used by the interface.
+	 * The Proxy at the end will be the equivalent to something like this:
+	 * Object proxyClass = new TestInterface<Entity.class>();
+	 * 
+	 * @param interfaceClass The Interface to be implemented by the Proxy
+	 * @param entityClass The Class to be used as the Generic of the interface
+	 * @return The Object of the Proxy class created
+	 */
+	public static Object createProxy(Class<?> interfaceClass, Class<?> entityClass) {
+		return Proxy.newProxyInstance(
+				interfaceClass.getClassLoader(),
+				new Class<?>[] { interfaceClass },
+				new GenericInvocationHandler(entityClass));
+	}
+
+	/**
+	 * Nested class used to generate the Proxy implementation classes.
+	 * In this class we can find some important points needed to make the Proxy classes
+	 * works properly.
+	 */
+	private static class GenericInvocationHandler implements InvocationHandler {
+		private final Class<?> entityClass;
+
+		public GenericInvocationHandler(Class<?> entityClass) {
+			this.entityClass = entityClass;
+		}
+
+		/**
+		 * In this method we pass the Proxy class, the method to be invoked and the arguments passed to that method
+		 * 
+		 * @param proxy The Proxy object
+		 * @param method The method to be invoked
+		 * @param args The arguments to be passed to the method
+		 * @return The invokation
+		 * @throws Throwable
+		 */
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			logger.debug("Method called: " + method.getName());
+
+			if (method.isDefault()) {
+				logger.debug("Is a default method");
+				return invokeDefaultMethod(proxy, method, args);
+			}
+	
+			// Custom logic for other methods
+			if (method.getReturnType().isAssignableFrom(entityClass)) {
+				logger.debug("Custom logic");
+				return entityClass.getDeclaredConstructor().newInstance();
+			}
+	
+			return null;
+		}
+
+		/**
+		 * Invoke a default method implemented in one interface.
+		 * As by default the Proxy don't call to the default methods, we have to 
+		 * invoke them in this special way to make them work
+		 * 
+		 * @param proxy The Proxy object
+		 * @param method The method to be invoked
+		 * @param args The arguments to be passed to the method
+		 * @return The invokation
+		 * @throws Throwable
+		 */
+		private Object invokeDefaultMethod(Object proxy, Method method, Object[] args) throws Throwable {
+			Class<?> declaringClass = method.getDeclaringClass();
+			
+			MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(declaringClass, MethodHandles.lookup());
+		
+			return lookup.findSpecial(
+					declaringClass,
+					method.getName(),
+					MethodType.methodType(method.getReturnType(), method.getParameterTypes()),
+					declaringClass)
+				.bindTo(proxy)
+				.invokeWithArguments(args != null ? args : new Object[0]);
+		}
+	}
+
 
 	/**
 	 * This method find all the application packages in a recursive way.

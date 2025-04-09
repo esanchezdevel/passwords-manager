@@ -17,11 +17,13 @@ public interface H2Repository<T> {
 	static final Logger logger = LogManager.getLogger(CredentialRepository.class);
 
 	default void store(Credential credential) {
+		logger.debug("Storing credential");
 		EntityManager em = DatabaseManager.getEntityManager();
 		em.getTransaction().begin();
 		em.persist(credential);
 		em.getTransaction().commit();
 		em.close();
+		logger.debug("Credential stored");
 	}
 
 	default Optional<Credential> findById(Long id) {
@@ -30,7 +32,8 @@ public interface H2Repository<T> {
 	}
 
 	default Optional<Credential> findBy(String columnName, String value) {
-				EntityManager em = DatabaseManager.getEntityManager();
+		logger.debug("Looking for credential by columnName: {} and value: {}", columnName, value);
+		EntityManager em = DatabaseManager.getEntityManager();
 		try {
 			TypedQuery<Credential> query = em.createQuery("SELECT c FROM Credential c WHERE c." + columnName + " = '" + value + "'", Credential.class);
 			Credential credential = query.getSingleResult();
