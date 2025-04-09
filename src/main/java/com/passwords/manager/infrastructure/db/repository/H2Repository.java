@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.passwords.manager.domain.model.Credential;
 import com.passwords.manager.infrastructure.db.DatabaseManager;
 
 import jakarta.persistence.EntityManager;
@@ -16,30 +15,39 @@ public interface H2Repository<T> {
 
 	static final Logger logger = LogManager.getLogger(CredentialRepository.class);
 
-	default void store(Credential credential) {
-		logger.debug("Storing credential");
+	// method to get the Generic type from the Proxy created during Dependency injection
+	Class<T> getEntityClass();
+
+	default void store(T object) {
+		logger.debug("Storing object");
 		EntityManager em = DatabaseManager.getEntityManager();
 		em.getTransaction().begin();
-		em.persist(credential);
+		em.persist(object);
 		em.getTransaction().commit();
 		em.close();
-		logger.debug("Credential stored");
+		logger.debug("Object stored");
 	}
 
-	default Optional<Credential> findById(Long id) {
+	default Optional<T> findById(Long id) {
 		// TODO Auto-generated method stub
 		return Optional.empty();
 	}
 
-	default Optional<Credential> findBy(String columnName, String value) {
-		logger.debug("Looking for credential by columnName: {} and value: {}", columnName, value);
+	default Optional<T> findBy(String columnName, String value) {
+		logger.debug("Looking for object by columnName: {} and value: {}", columnName, value);
+
+		// method to get the Generic type from the Proxy created during Dependency injection
+		Class<T> clazz = getEntityClass();
+
+		logger.debug("Class to use: {}", clazz);
+
 		EntityManager em = DatabaseManager.getEntityManager();
 		try {
-			TypedQuery<Credential> query = em.createQuery("SELECT c FROM Credential c WHERE c." + columnName + " = '" + value + "'", Credential.class);
-			Credential credential = query.getSingleResult();
+			TypedQuery<T> query = em.createQuery("SELECT c FROM " + clazz.getSimpleName() +" c WHERE c." + columnName + " = '" + value + "'", clazz);
+			T result = query.getSingleResult();
 
-			if (credential != null)
-				return Optional.of(credential);
+			if (result != null)
+				return Optional.of(result);
 		} catch (Exception e) {
 			logger.error("Error executing query.", e);
 		} finally {
@@ -48,7 +56,7 @@ public interface H2Repository<T> {
 		return Optional.empty();
 	}
 
-	default List<Credential> findAll() {
+	default List<T> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

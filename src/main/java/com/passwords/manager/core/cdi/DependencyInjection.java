@@ -201,6 +201,10 @@ public class DependencyInjection {
 				return entityClass.getDeclaredConstructor().newInstance();
 			}
 	
+			if (method.getName().equals("getEntityClass")) {
+				return entityClass;
+			}
+
 			return null;
 		}
 
