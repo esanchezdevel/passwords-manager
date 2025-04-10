@@ -15,7 +15,7 @@ import jakarta.persistence.TypedQuery;
 
 public interface H2Repository<T> {
 
-	static final Logger logger = LogManager.getLogger(CredentialRepository.class);
+	static final Logger logger = LogManager.getLogger(H2Repository.class);
 
 	// method to get the Generic type from the Proxy created during Dependency injection
 	Class<T> getEntityClass();
@@ -105,7 +105,7 @@ public interface H2Repository<T> {
 	 * @return A List of Objects found.
 	 * @throws NoResultException If no result can be retrieved from database.
 	 */
-	default List<T> findAll() {
+	default List<T> findAll() throws NoResultException {
 		logger.debug("Looking for all objects");
 
 		// method to get the Generic type from the Proxy created during Dependency injection
