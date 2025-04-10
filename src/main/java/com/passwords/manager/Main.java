@@ -3,6 +3,7 @@ package com.passwords.manager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.passwords.manager.application.util.Constants;
 import com.passwords.manager.core.cdi.DependencyInjection;
 
 import javafx.application.Application;
@@ -38,7 +39,7 @@ public class Main extends Application {
 		stage.setMaxHeight(screenBounds.getHeight());
 		stage.setMinHeight(screenBounds.getHeight());
 
-        stage.setTitle("JavaFX + CDI");
+        stage.setTitle(Constants.APP_TITLE_VERSION);
 		stage.setResizable(false);
         stage.setScene(scene);
         stage.show();

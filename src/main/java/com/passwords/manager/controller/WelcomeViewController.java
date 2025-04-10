@@ -3,6 +3,7 @@ package com.passwords.manager.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.passwords.manager.application.util.Constants;
 import com.passwords.manager.core.cdi.App;
 import com.passwords.manager.core.cdi.annotation.Inject;
 import com.passwords.manager.domain.service.CredentialService;
@@ -24,6 +25,6 @@ public class WelcomeViewController extends App {
 	public void initialize() {
 		logger.debug("Start Initialize");
 
-		titleLabel.setText("Title Label For Passwords Manager");
+		titleLabel.setText(Constants.APP_TITLE_VERSION);
 	}
 }
