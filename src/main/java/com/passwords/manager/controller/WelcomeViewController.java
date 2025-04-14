@@ -41,12 +41,10 @@ public class WelcomeViewController extends App {
 
 		if (!isAppKeyRegistered) {
 			logger.info("Show PopUp to register a new App Key");
-			// TODO show PopUp and register the new AppKey
 			showAppKeyPopup();
 		}
 
 	}
-
 
 	private void showAppKeyPopup() {
 		Stage popupStage = new Stage();
@@ -68,5 +66,9 @@ public class WelcomeViewController extends App {
 		layout.setStyle("-fx-padding: 20;");
 		popupStage.setScene(new Scene(layout));
 		popupStage.showAndWait();
+	}
+
+	public void handleAddSite() {
+		logger.info("Handle Add Site...");
 	}
 }

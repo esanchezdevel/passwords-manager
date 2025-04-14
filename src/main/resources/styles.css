@@ -1,0 +1,19 @@
+.circle-button {
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: #0096FF;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-padding: 0;
+}
+
+.circle-button:hover {
+    -fx-background-color: #ADD8E6;
+    -fx-text-fill: #0096FF;
+}

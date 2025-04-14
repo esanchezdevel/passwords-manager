@@ -10,10 +10,12 @@
             stylesheets="@styles.css"
             style="-fx-background-color: white;" 
             xmlns="http://javafx.com/javafx" 
-            xmlns:fx="http://javafx.com/fxml" 
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.passwords.manager.controller.WelcomeViewController">
 
 
-    <Label fx:id="titleLabel" text="" style="-fx-font-size: 20;" AnchorPane.topAnchor="45.0" AnchorPane.leftAnchor="80.0" />
+    <Label fx:id="titleLabel" text="" style="-fx-font-size: 20;" AnchorPane.topAnchor="45.0" AnchorPane.leftAnchor="600.0" />
+
+    <Button fx:id="addSiteButton" text="+" onAction="#handleAddSite" styleClass="circle-button" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="600.0" />
 
 </AnchorPane>
