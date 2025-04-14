@@ -53,7 +53,7 @@ public class WelcomeViewController extends App {
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.setTitle("App Key");
 
-		Label label = new Label("Introduzca una nueva clave. Recuerde que esta clave no podrá cambiarse en el futuro.");
+		Label label = new Label("Introduzca una clave única. Recuerde que esta clave no podrá cambiarse en el futuro.");
 		PasswordField inputField = new PasswordField();
 		Button okButton = new Button("Aceptar");
 
