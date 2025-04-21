@@ -32,12 +32,13 @@ public class Main extends Application {
 
         Scene scene = new Scene(loader.load());
 
-		stage.setX(screenBounds.getMinX());
-		stage.setY(screenBounds.getMinY());
-		stage.setMaxWidth(screenBounds.getWidth());
-		stage.setMinWidth(screenBounds.getWidth());
+		// Application size and position
+		stage.setMaxWidth(Constants.APP_WIDTH);
+		stage.setMinWidth(Constants.APP_WIDTH);
 		stage.setMaxHeight(screenBounds.getHeight());
 		stage.setMinHeight(screenBounds.getHeight());
+		stage.setX((screenBounds.getWidth() / 2.0) - (Constants.APP_WIDTH / 2.0));
+		stage.setY(screenBounds.getMinY());
 
         stage.setTitle(Constants.APP_TITLE_VERSION);
 		stage.setResizable(false);

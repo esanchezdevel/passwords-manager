@@ -6,4 +6,6 @@ public class Constants {
 	private static final String APP_VERSION = "v1.0";
 
 	public static final String APP_TITLE_VERSION = new StringBuilder(APP_TITLE).append(" ").append(APP_VERSION).toString();
+
+	public static final double APP_WIDTH = 800.0;
 }
