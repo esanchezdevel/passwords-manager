@@ -13,15 +13,17 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.passwords.manager.controller.WelcomeViewController">
 
+    <VBox fx:id="rootVBox" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0">
+        <HBox fx:id="titleHBox">
+            <ImageView fx:id="logoImage" fitWidth="40" fitHeight="40">
+                <image>
+                    <Image url="@img/icon.png"/>
+                </image>
+            </ImageView>
+            <Label fx:id="titleLabel" text="" style="-fx-font-size: 20;"/>
+        </HBox>
+        <Separator minWidth="800" maxWidth="Infinity" orientation="HORIZONTAL"/>
 
-    <ImageView fx:id="logoImage" fitWidth="40" fitHeight="40" AnchorPane.topAnchor="35.0" AnchorPane.leftAnchor="250.0">
-        <image>
-            <Image url="@img/icon.png"/>
-        </image>
-    </ImageView>
-    <Label fx:id="titleLabel" text="" style="-fx-font-size: 20;" AnchorPane.topAnchor="45.0" AnchorPane.leftAnchor="300.0" />
-    <Separator prefWidth="740" orientation="HORIZONTAL" AnchorPane.topAnchor="80.0" AnchorPane.leftAnchor="20.0"/>
-
-    <Button fx:id="addSiteButton" text="+" onAction="#handleAddSite" styleClass="circle-button" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="50.0" />
-
+        <Button fx:id="addSiteButton" text="+" onAction="#handleAddSite" styleClass="circle-button"/>
+    </VBox>
 </AnchorPane>

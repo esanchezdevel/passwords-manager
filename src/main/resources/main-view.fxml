@@ -9,7 +9,7 @@
 
     <!-- in this contentPane is where the different views will be loaded -->
     <center>
-        <Pane fx:id="contentPane"/>
+        <StackPane fx:id="contentPane"/>
     </center>
 
 </BorderPane>

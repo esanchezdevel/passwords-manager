@@ -2,19 +2,21 @@ package com.passwords.manager.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 public class MainWindowController {
 
 	@FXML
-	private Pane contentPane;
+	private StackPane contentPane;
 
 	@FXML
 	public void initialize() {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/welcome-view.fxml"));
 			Parent newView = loader.load();
+			StackPane.setMargin(newView, new Insets(0));
 			contentPane.getChildren().setAll(newView);
 		} catch (Exception e) {
 			e.printStackTrace();
