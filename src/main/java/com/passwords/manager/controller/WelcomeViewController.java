@@ -76,12 +76,6 @@ public class WelcomeViewController extends App {
 			logger.info("Show PopUp to register a new App Key");
 			showAppKeyPopup();
 		}
-
-		rootVBox.sceneProperty().addListener((observable, oldScene, newScene) -> {
-			if (newScene != null) {
-				logger.info("TEST--scene: {}", rootVBox.getScene()); // Prints the Scene
-			}
-		});
 	}
 
 	private void showAppKeyPopup() {
