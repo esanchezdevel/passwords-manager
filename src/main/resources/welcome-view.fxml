@@ -24,6 +24,6 @@
         </HBox>
         <Separator minWidth="800" maxWidth="Infinity" orientation="HORIZONTAL"/>
 
-        <Button fx:id="addSiteButton" text="New Site" onAction="#handleAddSite" styleClass="new-site-button"/>
+        <Button fx:id="addSiteButton" text="New Site" onAction="#goToNewSite" styleClass="new-site-button"/>
     </VBox>
 </AnchorPane>

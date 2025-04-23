@@ -3,6 +3,7 @@ package com.passwords.manager.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.passwords.manager.application.service.LoadViewService;
 import com.passwords.manager.application.util.Constants;
 import com.passwords.manager.application.util.PasswordsUtils;
 import com.passwords.manager.core.cdi.App;
@@ -43,6 +44,9 @@ public class WelcomeViewController extends App {
 
 	@Inject
 	private AppKeyService appKeyService;
+
+	@Inject
+	private LoadViewService loadViewService;
 
 	@FXML
 	public void initialize() {
@@ -103,16 +107,9 @@ public class WelcomeViewController extends App {
 		popupStage.showAndWait();
 	}
 
-	public void handleAddSite() {
-		logger.info("Handle Add Site...");
+	public void goToNewSite() {
+		logger.info("Go to new site view...");
 
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/new-site-view.fxml"));
-			Parent newView = loader.load();
-			StackPane.setMargin(newView, new Insets(0));
-			MainWindowController.contentPaneCopy.getChildren().setAll(newView);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		loadViewService.load(MainWindowController.contentPaneCopy, "/new-site-view.fxml");
 	}
 }

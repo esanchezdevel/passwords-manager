@@ -3,8 +3,10 @@ package com.passwords.manager.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.passwords.manager.application.service.LoadViewService;
 import com.passwords.manager.application.util.Constants;
 import com.passwords.manager.core.cdi.App;
+import com.passwords.manager.core.cdi.annotation.Inject;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,6 +32,9 @@ public class NewSiteViewController extends App {
 	private HBox titleHBox;
 	@FXML
 	private Label titleLabel;
+
+	@Inject
+	private LoadViewService loadViewService;
 
 	@FXML
 	public void initialize() {
@@ -62,13 +67,6 @@ public class NewSiteViewController extends App {
 	public void goToWelcome() {
 		logger.info("Go to welcome view...");
 
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/welcome-view.fxml"));
-			Parent newView = loader.load();
-			StackPane.setMargin(newView, new Insets(0));
-			MainWindowController.contentPaneCopy.getChildren().setAll(newView);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		loadViewService.load(MainWindowController.contentPaneCopy, "/welcome-view.fxml");
 	}
 }
