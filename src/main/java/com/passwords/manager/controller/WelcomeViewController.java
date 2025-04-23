@@ -10,6 +10,7 @@ import com.passwords.manager.core.cdi.annotation.Inject;
 import com.passwords.manager.domain.service.AppKeyService;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -34,6 +35,8 @@ public class WelcomeViewController extends App {
 	private HBox titleHBox;
 	@FXML
 	private Label titleLabel;
+	@FXML
+	private Button addSiteButton;
 
 	@Inject
 	private AppKeyService appKeyService;
@@ -61,6 +64,9 @@ public class WelcomeViewController extends App {
 		titleLabel.setText(Constants.APP_TITLE_VERSION);
 		titleLabel.setMinHeight(50.0);
 		titleLabel.setMaxHeight(50.0);
+
+		VBox.setMargin(titleHBox, new Insets(20, 20, 20, 20)); // top, right, bottom, left
+		VBox.setMargin(addSiteButton, new Insets(20, 20, 20, 20)); // top, right, bottom, left
 
 		boolean isAppKeyRegistered = appKeyService.isAppKeyRegistered();
 
