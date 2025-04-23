@@ -1,11 +1,9 @@
-.circle-button {
-    -fx-background-radius: 50%;
-    -fx-min-width: 40px;
-    -fx-min-height: 40px;
-    -fx-max-width: 40px;
-    -fx-max-height: 40px;
-    -fx-font-size: 25px;
-    -fx-font-weight: bold;
+.new-site-button {
+    -fx-min-width: 150px;
+    -fx-min-height: 30px;
+    -fx-max-width: 150px;
+    -fx-max-height: 30px;
+    -fx-font-size: 16px;
     -fx-text-fill: white;
     -fx-background-color: #0096FF;
     -fx-cursor: hand;
@@ -13,7 +11,8 @@
     -fx-padding: 0;
 }
 
-.circle-button:hover {
-    -fx-background-color: #ADD8E6;
+.new-site-button:hover {
+    -fx-background-color: white;
     -fx-text-fill: #0096FF;
+    -fx-border-color: #0096FF;
 }
