@@ -11,6 +11,8 @@ public class MainWindowController {
 	@FXML
 	private StackPane contentPane;
 
+	public static StackPane contentPaneCopy;
+
 	@FXML
 	public void initialize() {
 		try {
@@ -18,6 +20,7 @@ public class MainWindowController {
 			Parent newView = loader.load();
 			StackPane.setMargin(newView, new Insets(0));
 			contentPane.getChildren().setAll(newView);
+			contentPaneCopy = contentPane;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

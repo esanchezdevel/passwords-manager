@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import com.todo.todoapp.application.components.*?>
+
+<!-- welcome -->
+<AnchorPane fx:id="welcomePane" 
+            stylesheets="@styles.css"
+            style="-fx-background-color: white;" 
+            xmlns="http://javafx.com/javafx" 
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.passwords.manager.controller.NewSiteViewController">
+
+    <VBox fx:id="rootVBox" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0">
+        <HBox fx:id="titleHBox">
+            <ImageView fx:id="logoImage" fitWidth="40" fitHeight="40">
+                <image>
+                    <Image url="@img/icon.png"/>
+                </image>
+            </ImageView>
+            <Label fx:id="titleLabel" text="" style="-fx-font-size: 20;"/>
+        </HBox>
+        <Separator minWidth="800" maxWidth="Infinity" orientation="HORIZONTAL"/>
+
+        <Label fx:id="newSiteLabel" text="New Site" />
+        <Button fx:id="goBackButton" text="Go Back" onAction="#goToWelcome" styleClass="new-site-button"/>
+    </VBox>
+</AnchorPane>
