@@ -13,7 +13,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.passwords.manager.controller.NewSiteViewController">
 
-    <VBox fx:id="rootVBox" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0">
+    <VBox fx:id="rootVBox" spacing="20" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0">
         <HBox fx:id="titleHBox">
             <ImageView fx:id="logoImage" fitWidth="40" fitHeight="40">
                 <image>
@@ -24,7 +24,24 @@
         </HBox>
         <Separator minWidth="800" maxWidth="Infinity" orientation="HORIZONTAL"/>
 
-        <Label fx:id="newSiteLabel" text="New Site" />
-        <Button fx:id="goBackButton" text="Go Back" onAction="#goToWelcome" styleClass="new-site-button"/>
+        <HBox fx:id="siteNameHBox" spacing="20" alignment="CENTER">
+            <Label fx:id="siteNameLabel" text="Name:" style="-fx-font-size: 15;"/>
+            <TextField fx:id="siteNameTextField" prefWidth="600" style="-fx-font-size: 15;"/>
+        </HBox>
+
+        <HBox fx:id="siteUserHBox" spacing="20" alignment="CENTER">
+            <Label fx:id="siteUserLabel" text="Username:" style="-fx-font-size: 15;"/>
+            <TextField fx:id="siteUsernameTextField" prefWidth="600" style="-fx-font-size: 15;"/>
+        </HBox>
+
+        <HBox fx:id="sitePasswordHBox" spacing="20" alignment="CENTER">
+            <Label fx:id="sitePasswordLabel" text="Password:" style="-fx-font-size: 15;"/>
+            <TextField fx:id="sitePasswordTextField" prefWidth="600" style="-fx-font-size: 15;"/>
+        </HBox>
+        
+        <HBox fx:id="sitePasswordHBox" spacing="400" alignment="CENTER">
+            <Button fx:id="goBackButton" text="Go Back" onAction="#goToWelcome" styleClass="new-site-button"/>
+            <Button fx:id="SaveButton" text="Save" onAction="#saveSite" styleClass="new-site-button"/>
+        </HBox>
     </VBox>
 </AnchorPane>

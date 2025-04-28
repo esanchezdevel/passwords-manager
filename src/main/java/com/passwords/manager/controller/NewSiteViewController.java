@@ -66,4 +66,9 @@ public class NewSiteViewController extends App {
 
 		loadViewService.load(MainWindowController.contentPaneCopy, "/welcome-view.fxml");
 	}
+
+	@FXML
+	public void saveSite() {
+		logger.info("Saving new site");
+	}
 }
