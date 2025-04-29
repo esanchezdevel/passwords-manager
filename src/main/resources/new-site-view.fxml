@@ -36,7 +36,7 @@
 
         <HBox fx:id="sitePasswordHBox" spacing="20" alignment="CENTER">
             <Label fx:id="sitePasswordLabel" text="Password:" style="-fx-font-size: 15;"/>
-            <TextField fx:id="sitePasswordTextField" prefWidth="600" style="-fx-font-size: 15;"/>
+            <PasswordField fx:id="sitePasswordTextField" prefWidth="600" style="-fx-font-size: 15;"/>
         </HBox>
         
         <HBox fx:id="sitePasswordHBox" spacing="400" alignment="CENTER">
