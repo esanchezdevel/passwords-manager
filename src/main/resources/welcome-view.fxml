@@ -28,6 +28,15 @@
 
         <Separator minWidth="800" maxWidth="Infinity" orientation="HORIZONTAL"/>
 
-        
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <ScrollPane fx:id="credentialsScrollPane" prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+                <content>
+                    <VBox fx:id="credentialsVBox" spacing="10.0" fillWidth="true" />
+                </content>
+                <HBox.margin>
+                    <javafx.geometry.Insets left="20.0" top="20.0" right="20.0" /> <!-- margins of scroll pane -->
+                </HBox.margin>
+            </ScrollPane>
+        </HBox>
     </VBox>
 </AnchorPane>

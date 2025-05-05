@@ -35,7 +35,7 @@ public class WelcomeViewController extends App {
 	@FXML
 	private AnchorPane welcomePane;
 	@FXML
-	private VBox rootVBox;
+	private VBox rootVBox, credentialsVBox;
 	@FXML
 	private HBox titleHBox;
 	@FXML
@@ -90,7 +90,14 @@ public class WelcomeViewController extends App {
 
 		List<Credential> credentials = credentialService.getAll();
 		logger.info("Credentials found:");
-		credentials.forEach(c -> logger.info(c));
+		credentials.forEach(c -> {
+			logger.info(c);
+
+			// add the sites names to the scrollable vbox.
+			Label label = new Label();
+			label.setText(c.getSiteName());
+			credentialsVBox.getChildren().add(label);
+		});
 	}
 
 	private void showAppKeyPopup() {
