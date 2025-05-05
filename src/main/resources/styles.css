@@ -16,3 +16,15 @@
     -fx-text-fill: #0096FF;
     -fx-border-color: #0096FF;
 }
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: white;
+}
+
+#credentialsVBox {
+    -fx-background-color: white;
+}

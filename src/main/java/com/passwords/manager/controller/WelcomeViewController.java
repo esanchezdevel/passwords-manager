@@ -107,7 +107,7 @@ public class WelcomeViewController extends App {
 			if (odd.get())
 				label.setStyle("-fx-font-size: 15; -fx-padding: 10; -fx-background-color: white;");
 			else
-				label.setStyle("-fx-font-size: 15; -fx-padding: 10; -fx-background-color: ligthgrey;");
+				label.setStyle("-fx-font-size: 15; -fx-padding: 10; -fx-background-color: #d6eaf8;");
 			label.setMaxWidth(398.0);
 			label.setMinWidth(398.0);
 			label.setOnMouseClicked(e -> {

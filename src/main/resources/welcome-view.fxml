@@ -36,10 +36,10 @@
             </Label>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10">
-            <ScrollPane fx:id="credentialsScrollPane" prefHeight="300.0" prefWidth="400.0" 
-                        xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: white;">
+            <ScrollPane fx:id="credentialsScrollPane" styleClass="scroll-pane" prefHeight="300.0" prefWidth="400.0" 
+                        xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: transparent;">
                 <content>
-                    <VBox fx:id="credentialsVBox" spacing="10.0" fillWidth="true" />
+                    <VBox fx:id="credentialsVBox" spacing="0.0" fillWidth="true" />
                 </content>
                 <HBox.margin>
                     <javafx.geometry.Insets left="20.0" top="15.0" right="20.0" /> <!-- margins of scroll pane -->
