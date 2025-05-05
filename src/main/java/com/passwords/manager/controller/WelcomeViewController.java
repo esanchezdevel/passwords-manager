@@ -1,6 +1,7 @@
 package com.passwords.manager.controller;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,13 +91,27 @@ public class WelcomeViewController extends App {
 
 		List<Credential> credentials = credentialService.getAll();
 		logger.info("Credentials found:");
+		AtomicBoolean odd = new AtomicBoolean(false);
 		credentials.forEach(c -> {
 			logger.info(c);
 
 			// add the sites names to the scrollable vbox.
 			Label label = new Label();
 			label.setText(c.getSiteName());
+			if (odd.get())
+				label.setStyle("-fx-font-size: 15; -fx-padding: 10; -fx-background-color: white;");
+			else
+				label.setStyle("-fx-font-size: 15; -fx-padding: 10; -fx-background-color: ligthgrey;");
+			label.setMaxWidth(390.0);
+			label.setMinWidth(390.0);
+			label.setOnMouseClicked(e -> {
+				logger.info("Show site: {}", c.getId());
+			});
 			credentialsVBox.getChildren().add(label);
+			if (odd.get())
+				odd.set(false);
+			else
+				odd.set(true);
 		});
 	}
 

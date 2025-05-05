@@ -37,7 +37,7 @@
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10">
             <ScrollPane fx:id="credentialsScrollPane" prefHeight="300.0" prefWidth="400.0" 
-                        xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" style="-fx-background: white;">
+                        xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: white;">
                 <content>
                     <VBox fx:id="credentialsVBox" spacing="10.0" fillWidth="true" />
                 </content>
