@@ -1,17 +1,26 @@
 package com.passwords.manager.controller;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.passwords.manager.application.service.LoadViewService;
+import com.passwords.manager.application.util.CommonUtils;
 import com.passwords.manager.application.util.Constants;
 import com.passwords.manager.core.cdi.App;
 import com.passwords.manager.core.cdi.annotation.Inject;
+import com.passwords.manager.domain.model.Credential;
+import com.passwords.manager.domain.service.CredentialService;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -29,9 +38,16 @@ public class NewSiteViewController extends App {
 	private HBox titleHBox;
 	@FXML
 	private Label titleLabel;
+	@FXML
+	private TextField siteNameTextField, siteUrlTextField, siteUsernameTextField;
+	@FXML
+	private PasswordField sitePasswordTextField;
 
 	@Inject
 	private LoadViewService loadViewService;
+
+	@Inject
+	private CredentialService credentialService;
 
 	@FXML
 	public void initialize() {
@@ -70,5 +86,38 @@ public class NewSiteViewController extends App {
 	@FXML
 	public void saveSite() {
 		logger.info("Saving new site");
+
+		if (CommonUtils.isEmpty(siteNameTextField.getText()) || CommonUtils.isEmpty(siteUrlTextField.getText()) || 
+			CommonUtils.isEmpty(siteUsernameTextField.getText()) || CommonUtils.isEmpty(sitePasswordTextField.getText())) {
+			String errorMsg = "Mandatory values not present. Please, review the form";
+			logger.error(errorMsg);
+
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Validation Error");
+			alert.setHeaderText("Missing or Invalid Input");
+			alert.setContentText(errorMsg);
+			alert.showAndWait();
+			return;
+		}
+
+		Optional<Credential> storedCredential = credentialService.getBySiteName(siteNameTextField.getText());
+
+		if (storedCredential.isPresent()) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Validation Error");
+			alert.setHeaderText("Something goes wrong!");
+			alert.setContentText("A site with name '" + siteNameTextField.getText() + "' is already registered");
+			alert.showAndWait();
+			return;
+		}
+
+		Credential credential = new Credential();
+		credential.setSiteName(siteNameTextField.getText());
+		credential.setSiteUrl(siteUrlTextField.getText());
+		credential.setUsername(siteUsernameTextField.getText());
+		credential.setPassword(sitePasswordTextField.getText());
+		credentialService.store(credential);
+
+		loadViewService.load(MainWindowController.contentPaneCopy, "/welcome-view.fxml");
 	}
 }

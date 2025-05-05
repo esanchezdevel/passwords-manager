@@ -32,6 +32,14 @@
             <TextField fx:id="siteNameTextField" prefWidth="600" style="-fx-font-size: 15;"/>
         </HBox>
 
+        <HBox fx:id="siteUrlHBox" spacing="20" alignment="CENTER">
+            <VBox.margin>
+                <javafx.geometry.Insets top="20"/>
+            </VBox.margin>
+            <Label fx:id="siteUrlLabel" minWidth="100" text="URL:" style="-fx-font-size: 15;" alignment="CENTER_RIGHT"/>
+            <TextField fx:id="siteUrlTextField" prefWidth="600" style="-fx-font-size: 15;"/>
+        </HBox>
+
         <HBox fx:id="siteUserHBox" spacing="20" alignment="CENTER">
             <VBox.margin>
                 <javafx.geometry.Insets top="20"/>
