@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.passwords.manager.application.component.PopUpWindow;
 import com.passwords.manager.application.service.LoadViewService;
 import com.passwords.manager.application.util.CommonUtils;
 import com.passwords.manager.application.util.Constants;
@@ -92,22 +93,14 @@ public class NewSiteViewController extends App {
 			String errorMsg = "Mandatory values not present. Please, review the form";
 			logger.error(errorMsg);
 
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Validation Error");
-			alert.setHeaderText("Missing or Invalid Input");
-			alert.setContentText(errorMsg);
-			alert.showAndWait();
+			PopUpWindow.show(AlertType.ERROR, "Validation Error", "Missing or Invalid Input", errorMsg);
 			return;
 		}
 
 		Optional<Credential> storedCredential = credentialService.getBySiteName(siteNameTextField.getText());
 
 		if (storedCredential.isPresent()) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Validation Error");
-			alert.setHeaderText("Something goes wrong!");
-			alert.setContentText("A site with name '" + siteNameTextField.getText() + "' is already registered");
-			alert.showAndWait();
+			PopUpWindow.show(AlertType.ERROR, "Validation Error", "Something goes wrong!", "A site with name '" + siteNameTextField.getText() + "' is already registered");
 			return;
 		}
 
