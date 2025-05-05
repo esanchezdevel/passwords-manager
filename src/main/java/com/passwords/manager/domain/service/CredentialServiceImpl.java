@@ -39,4 +39,11 @@ public class CredentialServiceImpl implements CredentialService {
 		logger.info("Storing credential");
 		credentialRepository.store(credential);
 	}
+
+	@Override
+	public List<Credential> getAll() {
+		List<Credential> credentials = credentialRepository.findAll();
+		logger.debug("Credentials found: {}", credentials.size());
+		return credentials;
+	}
 }

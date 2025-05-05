@@ -1,5 +1,7 @@
 package com.passwords.manager.controller;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,7 +10,9 @@ import com.passwords.manager.application.util.Constants;
 import com.passwords.manager.application.util.PasswordsUtils;
 import com.passwords.manager.core.cdi.App;
 import com.passwords.manager.core.cdi.annotation.Inject;
+import com.passwords.manager.domain.model.Credential;
 import com.passwords.manager.domain.service.AppKeyService;
+import com.passwords.manager.domain.service.CredentialService;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -41,6 +45,9 @@ public class WelcomeViewController extends App {
 
 	@Inject
 	private AppKeyService appKeyService;
+
+	@Inject
+	private CredentialService credentialService;
 
 	@Inject
 	private LoadViewService loadViewService;
@@ -80,6 +87,10 @@ public class WelcomeViewController extends App {
 			logger.info("Show PopUp to register a new App Key");
 			showAppKeyPopup();
 		}
+
+		List<Credential> credentials = credentialService.getAll();
+		logger.info("Credentials found:");
+		credentials.forEach(c -> logger.info(c));
 	}
 
 	private void showAppKeyPopup() {
