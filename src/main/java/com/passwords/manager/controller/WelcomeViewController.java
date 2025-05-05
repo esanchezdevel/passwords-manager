@@ -22,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -43,6 +44,8 @@ public class WelcomeViewController extends App {
 	private Label titleLabel;
 	@FXML
 	private Button addSiteButton;
+	@FXML
+	private ScrollPane credentialsScrollPane;
 
 	@Inject
 	private AppKeyService appKeyService;
@@ -89,6 +92,9 @@ public class WelcomeViewController extends App {
 			showAppKeyPopup();
 		}
 
+		credentialsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		credentialsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
 		List<Credential> credentials = credentialService.getAll();
 		logger.info("Credentials found:");
 		AtomicBoolean odd = new AtomicBoolean(false);
@@ -102,8 +108,8 @@ public class WelcomeViewController extends App {
 				label.setStyle("-fx-font-size: 15; -fx-padding: 10; -fx-background-color: white;");
 			else
 				label.setStyle("-fx-font-size: 15; -fx-padding: 10; -fx-background-color: ligthgrey;");
-			label.setMaxWidth(390.0);
-			label.setMinWidth(390.0);
+			label.setMaxWidth(398.0);
+			label.setMinWidth(398.0);
 			label.setOnMouseClicked(e -> {
 				logger.info("Show site: {}", c.getId());
 			});
